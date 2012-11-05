@@ -7,10 +7,10 @@ public class baseAlgorithm{
 		memoryBlock = new int[memorySize];
 	}
 	
-	void allocate(){
+	void allocate(int jobID, int jobSize, int jobTime){
 		/* This method to be overloaded by each algorithm */
 	}
-	void deallocate(){
+	void deallocate(int jobSize, int beginningLocation){
 		
 	}
 }
