@@ -11,12 +11,12 @@
 public class Job {
 	private jobThread myThread; //Reference to the thread we control
 	private boolean myThreadPaused; //Used to keep track of the execution state of our thread
-	//private BaseAlgorithm parentAlgorithm; //Used for knowing who to tell that we're done.
 	
-	public	Job(int jobTime, int jobID/*, BaseAlgorithm parentAlgorithm */){
+	public	Job(int jobTime, int jobID, Method parentAlgorithmDeallocate ){
 		//Create a new job, and start it running
-		myThread = new jobThread(jobTime, jobID /*, parentAlgorithm*/);
+		myThread = new jobThread(jobTime, jobID, parentAlgorithmDeallocate);
 		myThread.start();
+		myThreadPause = false;
 	}
 	
 	public void pause(){

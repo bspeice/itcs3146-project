@@ -6,10 +6,11 @@ public class jobThread extends Thread {
 	private long startTime;
 	private int jobID;
 	private boolean jobDone;
-	/* private BaseAlgorithm parentAlgorithm *///Our parent to notify when we're done.
+	private Method parentAlgorithmDeallocate; //Our parent to notify when we're done.
 	
-	public jobThread(long jobTime, int jobID /*, BaseAlgorithm parentAlgorithm*/){
+	public jobThread(long jobTime, int jobID, Method parentAlgorithmDeallocate){
 		this.jobTime = jobTime;
+		this.parentAlgorithmDeallocate = parentAlgorithmDeallocate;
 		elapsedTime = 0;
 		isPaused = false;
 		startTime = 0;
@@ -69,7 +70,7 @@ public class jobThread extends Thread {
 			}
 			
 			//We're done, go ahead and notify our algorithm to clean us up
-			/* parentAlgorithm.deallocate(jobID); */
+			parentAlgorithmDeallocate(jobID);
 		} catch (Exception e) {
 			return;
 		}
