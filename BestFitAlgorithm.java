@@ -8,5 +8,8 @@
  * @author djw612
  */
 public class BestFitAlgorithm {
-    
+    public BestFitAlgorithm()
+    {
+        //Constructor goes here
+    }
 }
