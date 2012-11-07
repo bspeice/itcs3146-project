@@ -1,10 +1,13 @@
-class threadedAllocation extends baseAlgorithm
+class threadedAllocation implements baseAlgorithm
 {
-	threadedAllocation {
+	int[] memoryBlock;
+	
+	threadedAllocation(int memorySize) {
 		/* Constructor specific for this algorithm
 		 *
 		 * Start the threaded garbage collector, and then begin
 		 * our actual operations */
+		memoryBlock = new int[memorySize];
 	}
 
 	int locateBlock(int blockSize){
@@ -36,7 +39,7 @@ class threadedAllocation extends baseAlgorithm
 		return -1;
 	}
 
-	void allocate(int jobID, int jobSize, int jobLength ){
+	public void allocate(int jobID, int jobSize, int jobLength ){
 		/* Over-rides allocate() of baseAlgorithm */
 
 		//Loop until we get a block big enough for our job
@@ -54,7 +57,7 @@ class threadedAllocation extends baseAlgorithm
 		//TODO: Code to start the job
 	}
 
-	void deallocate(int jobSize, int beginningLocation){
+	public void deallocate(int jobSize, int beginningLocation){
 		/* Over-rides deallocate() of baseAlgorithm */
 
 		//Simple algorithm, basically just mark the memory as cleared.
