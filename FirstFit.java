@@ -5,7 +5,7 @@
 */
 
 //this section sets up the Car class
-class FirstFit
+class FirstFit extends baseAlgorithm
 {
 	
 	//this section sets up the private elements of the class
@@ -24,6 +24,25 @@ class FirstFit
 	private int[] tempVal = new int[6];
 	private int[][] memTable = new int[memSize+2][6];
 	
+	
+	void baseAlgorithm(int memorySize)
+	{
+		/* Constructor needed for each algorithm */
+		memoryBlock = new int[memorySize];
+		memSize=memorySize;
+	}
+	
+	void allocate(int jobID, int jobSize, int jobTime)
+	{
+		/* This method to be overloaded by each algorithm */
+	}
+	
+	void deallocate(int jobSize, int beginningLocation)
+	{
+	
+	}
+
+
 	
 	//this is a no argument constructor
 	public FirstFit()
