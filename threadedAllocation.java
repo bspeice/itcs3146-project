@@ -1,5 +1,4 @@
-class threadedAllocation implements baseAlgorithm
-{
+public class threadedAllocation implements baseAlgorithm{
 	int[] memoryBlock;
 	
 	threadedAllocation(int memorySize) {
