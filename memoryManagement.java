@@ -55,7 +55,7 @@ public class memoryManagement{
 			fileScan = new Scanner(file);
 			for(jobLength = 0; fileScan.hasNextLine() ; jobLength++){
 				token = new StringTokenizer(fileScan.nextLine(),",");
-				id[jobLength]++;
+				id[jobLength] = jobLength+1;
 				size[jobLength] = Integer.parseInt(token.nextToken());
 				time[jobLength] = Integer.parseInt(token.nextToken());
 			}
