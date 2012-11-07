@@ -1,3 +1,5 @@
+import java.lang.reflect.Method;
+
 public class jobThread extends Thread {
 	private final int sleepResolution = 200; //Milliseconds
 	private long jobTime; //Milliseconds
@@ -8,14 +10,19 @@ public class jobThread extends Thread {
 	private boolean jobDone;
 	private Method parentAlgorithmDeallocate; //Our parent to notify when we're done.
 	
-	public jobThread(long jobTime, int jobID, Method parentAlgorithmDeallocate){
+	/* Fields that we need to know when calling the deallocate */
+	private int jobSize;
+	private int beginningLocation;
+	
+	public jobThread(long jobTime, int jobID, Method parentAlgorithmDeallocate, int jobSize, int beginningLocation){
 		this.jobTime = jobTime;
 		this.parentAlgorithmDeallocate = parentAlgorithmDeallocate;
-		elapsedTime = 0;
-		isPaused = false;
-		startTime = 0;
+		this.elapsedTime = 0;
+		this.isPaused = false;
+		this.startTime = 0;
 		this.jobID = jobID;
-		//this.parentAlgorithm = parentAlgorithm;
+		this.jobSize = jobSize;
+		this.beginningLocation = beginningLocation;
 	}
 	
 	public void pause(){
@@ -70,12 +77,9 @@ public class jobThread extends Thread {
 			}
 			
 			//We're done, go ahead and notify our algorithm to clean us up
-			parentAlgorithmDeallocate(jobID);
+			parentAlgorithmDeallocate.invoke(this.jobSize, this.beginningLocation);
 		} catch (Exception e) {
 			return;
 		}
-		
-		
-				
 	}
 }

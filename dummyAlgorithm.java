@@ -1,4 +1,4 @@
-public class dummyAlgorithm{
+public class dummyAlgorithm implements baseAlgorithm{
 	
 	int[] memoryBlock;
 	
@@ -7,11 +7,11 @@ public class dummyAlgorithm{
 		memoryBlock = new int[memorySize];
 	}
 	
-	void allocate(int jobID, int jobSize, int jobTime){
+	public void allocate(int jobID, int jobSize, int jobTime){
 		/* This method to be overloaded by each algorithm */
 		System.out.println("Allocating job " + jobID + " with size: " + jobSize + " for: " + jobTime + " milliseconds.");
 	}
-	void deallocate(int jobSize, int beginningLocation){
+	public void deallocate(int jobSize, int beginningLocation){
 		System.out.println("Removing job with size: " + jobSize + " beginning at: " + beginningLocation);
 	}
 }

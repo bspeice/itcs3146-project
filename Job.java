@@ -1,3 +1,5 @@
+import java.lang.reflect.Method;
+
 /*
  * Author: Bradlee Speice
  * Job Class
@@ -12,11 +14,11 @@ public class Job {
 	private jobThread myThread; //Reference to the thread we control
 	private boolean myThreadPaused; //Used to keep track of the execution state of our thread
 	
-	public	Job(int jobTime, int jobID, Method parentAlgorithmDeallocate ){
+	public	Job(int jobTime, int jobID, Method parentAlgorithmDeallocate, int jobSize, int beginningLocation ){
 		//Create a new job, and start it running
-		myThread = new jobThread(jobTime, jobID, parentAlgorithmDeallocate);
+		myThread = new jobThread(jobTime, jobID, parentAlgorithmDeallocate, jobSize, beginningLocation);
 		myThread.start();
-		myThreadPause = false;
+		myThreadPaused = false;
 	}
 	
 	public void pause(){
