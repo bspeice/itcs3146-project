@@ -15,11 +15,10 @@ class FirstFit implements baseAlgorithm
 					startLoc,
 					endLoc,
 					blkSize,
-					memSize = DemoMemory.memory,
+					memSize = memoryManagement.memory,
 					active,
 					noJobs=0,
 					s1=0,
-					chkCompress=0,
 					compMemTest=0,
 					tableEntries=1;
 	private int[] tempVal = new int[6];
@@ -38,7 +37,7 @@ class FirstFit implements baseAlgorithm
 	}
 	
 	
-	//this method sets the job up              need to modify the job class to return something
+	//this method sets the job up 
 	public void allocate(int ID, int size, int jTime)
 	{
 		jobId = ID;
@@ -77,7 +76,6 @@ class FirstFit implements baseAlgorithm
 					memTable[s1+1][3] = memSize-1;
 					memTable[s1+1][4] = memSize-memTable[s1+1][2];
 					memTable[s1+1][5] = -1;
-					chkCompress=0;
 					tableEntries++;
 					s1=memSize*2;
 				}
@@ -99,7 +97,6 @@ class FirstFit implements baseAlgorithm
 					memTable[s1+1][4] = memSize-memTable[s1+1][2];
 					memTable[s1+1][5] = -1;
 					tableEntries++;
-					chkCompress=0;
 					s1=memSize*2;
 				}
 			}
@@ -110,7 +107,6 @@ class FirstFit implements baseAlgorithm
 				memTable[s1][1] = jobSize;
 				memTable[s1][5] = 1;
 				fillMemory(jobId, jobSize, memTable[s1][2]);
-				chkCompress=0;
 				s1=memSize*2;
 			}
 			else
@@ -119,21 +115,12 @@ class FirstFit implements baseAlgorithm
 			}
 		}while(s1<tableEntries);
 		
-		//this section runs if the job will not fit after memory compaction
-		if(chkCompress==1)
-		{
-			chkCompress=0;
-			System.out.println("put job back in queue");
-			//need to return that this job needs to be returned to the queue
-			System.exit(0);  
-		}
-		
+	
 		//if job will not fit this section will compress memory and try placing the job again
-		if(s1==tableEntries && chkCompress==0)
+		if(s1==tableEntries)
 		{
 			noJobs=noJobs-1;
 			compMem();
-			chkCompress++;
 			allocate(ID, size, jobTime);
 		}
 	}
