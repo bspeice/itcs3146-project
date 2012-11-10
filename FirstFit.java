@@ -88,7 +88,6 @@ class FirstFit implements baseAlgorithm
 					memTable[s1][3] = jobSize+memTable[s1][2]-1;
 					memTable[s1][4] = memTable[s1][3]-memTable[s1][2]+1;
 					memTable[s1][5] = 1;
-					System.out.println(jobId+"  "+jobSize+"    "+memTable[s1][2]);
 					fillMemory(jobId, jobSize, memTable[s1][2]);
 					memTable[s1+1][0] = 0;
 					memTable[s1+1][1] = 0;
@@ -253,7 +252,6 @@ class FirstFit implements baseAlgorithm
 		for(int fillCount=startLoc; fillCount<jobSize+startLoc; fillCount++)
 		{
 			memory[fillCount]=jobId;
-			System.out.println("\n"+fillCount+"   "+jobId);
 		}
 	}
 
