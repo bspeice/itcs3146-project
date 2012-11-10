@@ -5,16 +5,17 @@
 */
 
 //this section sets up the Car class
-class FirstFit extends baseAlgorithm
+class FirstFit implements baseAlgorithm
 {
 	
 	//this section sets up the private elements of the class
 	private int	jobId,
 					jobSize,
+					jobTime,
 					startLoc,
 					endLoc,
 					blkSize,
-					memSize=1024,
+					memSize = DemoMemory.memory,
 					active,
 					noJobs=0,
 					s1=0,
@@ -23,26 +24,7 @@ class FirstFit extends baseAlgorithm
 					tableEntries=1;
 	private int[] tempVal = new int[6];
 	private int[][] memTable = new int[memSize+2][6];
-	
-	
-	void baseAlgorithm(int memorySize)
-	{
-		/* Constructor needed for each algorithm */
-		memoryBlock = new int[memorySize];
-		memSize=memorySize;
-	}
-	
-	void allocate(int jobID, int jobSize, int jobTime)
-	{
-		/* This method to be overloaded by each algorithm */
-	}
-	
-	void deallocate(int jobSize, int beginningLocation)
-	{
-	
-	}
-
-
+	private int[] memory = new int[memSize];
 	
 	//this is a no argument constructor
 	public FirstFit()
@@ -55,11 +37,13 @@ class FirstFit extends baseAlgorithm
 		memTable[0][5]=-1;			//status, 0=not active, 1=active, -1=special
 	}
 	
+	
 	//this method sets the job up              need to modify the job class to return something
-	public void addJob(int ID, int size)
+	public void allocate(int ID, int size, int jTime)
 	{
 		jobId = ID;
 		jobSize = size;
+		jobTime = jTime;
 		noJobs++;
 		s1=0;
 		
@@ -86,6 +70,7 @@ class FirstFit extends baseAlgorithm
 					memTable[s1][3] = jobSize-1;
 					memTable[s1][4] = memTable[0][3]-memTable[0][2]+1;
 					memTable[s1][5] = 1;
+					fillMemory(jobId, jobSize, memTable[s1][2]);
 					memTable[s1+1][0] = 0;
 					memTable[s1+1][1] = 0;
 					memTable[s1+1][2] = memTable[s1][3]+1;
@@ -105,6 +90,8 @@ class FirstFit extends baseAlgorithm
 					memTable[s1][3] = jobSize+memTable[s1][2]-1;
 					memTable[s1][4] = memTable[s1][3]-memTable[s1][2]+1;
 					memTable[s1][5] = 1;
+					System.out.println(jobId+"  "+jobSize+"    "+memTable[s1][2]);
+					fillMemory(jobId, jobSize, memTable[s1][2]);
 					memTable[s1+1][0] = 0;
 					memTable[s1+1][1] = 0;
 					memTable[s1+1][2] = memTable[s1][3]+1;
@@ -122,6 +109,7 @@ class FirstFit extends baseAlgorithm
 				memTable[s1][0] = jobId;
 				memTable[s1][1] = jobSize;
 				memTable[s1][5] = 1;
+				fillMemory(jobId, jobSize, memTable[s1][2]);
 				chkCompress=0;
 				s1=memSize*2;
 			}
@@ -146,11 +134,11 @@ class FirstFit extends baseAlgorithm
 			noJobs=noJobs-1;
 			compMem();
 			chkCompress++;
-			addJob(ID, size);
+			allocate(ID, size, jobTime);
 		}
 	}
 	
-	//this method removes a job it does not check to see if the job exisits
+	//this method is used if you want to deallocate a job by jobId
 	public void removeJob(int ID)
 	{
 		jobId = ID;
@@ -159,10 +147,35 @@ class FirstFit extends baseAlgorithm
 		{
 			if(memTable[s1][0] == jobId)
 			{
+				jobSize = memTable[s1][1];
+				startLoc = memTable[s1][2];
+				s1=memSize*2;
+			}
+			else
+			{
+				s1++;
+			}
+			
+		}while (s1<tableEntries);
+		deallocate(jobSize, startLoc);
+	}
+
+	//this method removes a job it does not check to see if the job exisits
+	public void deallocate(int jobSize, int beginningLocation)
+	//public void removeJob(int ID)
+	{
+		jobId = 0;
+		jobSize = jobSize;
+		startLoc = beginningLocation;
+		s1=0;
+		do
+		{
+			if(memTable[s1][2] == startLoc)
+			{
 				memTable[s1][0] = 0;
 				memTable[s1][1] = 0;
 				memTable[s1][5] = 0;
-				s1=0;
+				s1=memSize*2;
 				jobId=-1;
 				noJobs--;
 			}
@@ -171,7 +184,7 @@ class FirstFit extends baseAlgorithm
 				s1++;
 			}
 		
-		}while (jobId != -1 || s1<tableEntries);
+		}while (s1<tableEntries);
 		
 	}
 	
@@ -220,6 +233,40 @@ class FirstFit extends baseAlgorithm
 				memTable[tableEntries-1][5]=-1;
 				c--;
 			}
+		}
+		
+		
+		
+		s1=0;
+		for(int c1=0; c1<tableEntries; c1++)
+		{
+			if(memTable[c1][0]==-1)
+			{
+				s1++;
+			}
+		}
+		tableEntries=tableEntries-s1;
+		
+		if(memTable[tableEntries-2][5]==0 && memTable[tableEntries-1][5]==-1)
+		{
+			memTable[tableEntries-2][3]=memTable[tableEntries-1][3];
+			memTable[tableEntries-2][4]=memTable[tableEntries-1][4]+memTable[tableEntries-2][4];
+			memTable[tableEntries-2][5]=-1;
+			tableEntries--;
+		}
+	}
+	
+	//this method fills the memory location with the data
+	private void fillMemory(int job, int size, int start)
+	{
+		jobId=job;
+		jobSize=size;
+		startLoc=start;
+		
+		for(int fillCount=startLoc; fillCount<jobSize+startLoc; fillCount++)
+		{
+			memory[fillCount]=jobId;
+			System.out.println("\n"+fillCount+"   "+jobId);
 		}
 	}
 
