@@ -15,7 +15,7 @@ class FirstFit implements baseAlgorithm
 					startLoc,
 					endLoc,
 					blkSize,
-					memSize = memoryManagement.memory,
+					memSize,
 					active,
 					noJobs=0,
 					s1=0,
@@ -26,8 +26,9 @@ class FirstFit implements baseAlgorithm
 	private int[] memory = new int[memSize];
 	
 	//this is a no argument constructor
-	public FirstFit()
+	public FirstFit(int memSize)
 	{
+		this.memSize = memSize;
 		memTable[0][0]=0;				//job number
 		memTable[0][1]=0;				//job size
 		memTable[0][2]=0;				//start location in memory

@@ -1,3 +1,4 @@
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class jobThread extends Thread {
@@ -9,14 +10,16 @@ public class jobThread extends Thread {
 	private int jobID;
 	private boolean jobDone;
 	private Method parentAlgorithmDeallocate; //Our parent to notify when we're done.
+	private Object parentAlgorithm; //The actual instance of our parent class
 	
 	/* Fields that we need to know when calling the deallocate */
 	private int jobSize;
 	private int beginningLocation;
 	
-	public jobThread(long jobTime, int jobID, Method parentAlgorithmDeallocate, int jobSize, int beginningLocation){
+	public jobThread(long jobTime, int jobID, int jobSize, int beginningLocation, Method parentAlgorithmDeallocate, Object parentClass){
 		this.jobTime = jobTime;
 		this.parentAlgorithmDeallocate = parentAlgorithmDeallocate;
+		this.parentAlgorithm = parentClass;
 		this.elapsedTime = 0;
 		this.isPaused = false;
 		this.startTime = 0;
@@ -76,8 +79,10 @@ public class jobThread extends Thread {
 				}
 			}
 			
+			Object[] deallocateArgs = {this.jobSize, this.beginningLocation};
 			//We're done, go ahead and notify our algorithm to clean us up
-			parentAlgorithmDeallocate.invoke(this.jobSize, this.beginningLocation);
+			parentAlgorithmDeallocate.invoke(parentAlgorithm, deallocateArgs);
+			
 		} catch (Exception e) {
 			return;
 		}
