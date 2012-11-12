@@ -9,6 +9,8 @@ import java.util.StringTokenizer;
 
 public class memoryManagement{
 
+	public static int memory = 1024;
+
 	public static void main(String args[])throws Exception{
 		final int JOBAMOUNT = 1000;
 		final int MEMORYSIZE = 10000;
