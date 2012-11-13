@@ -26,20 +26,23 @@ class threadedAllocationGarbage extends Thread
 		int maxFreeSize = 0, maxFreeIndex = 0;
 		while (memoryLoc < this.memoryBlock.length)
 		{
-			if (this.memoryBlock[memoryLoc] != 0)
+			if (this.memoryBlock[memoryLoc] != 0){
 				//Block isn't free
+				memoryLoc++;
 				continue;
+			}
 
 			//One location is free, find out total size free
 			//This loop breaks either when we've found the size we need, or
 			//we found the beginning of the next block.
 			int beginningLoc = memoryLoc;
 			int free = 0;
-			while (this.memoryBlock[memoryLoc] == 0)
+			while (memoryLoc < this.memoryBlock.length && this.memoryBlock[memoryLoc] == 0)
 			{
 				memoryLoc += 1;
 				free += 1;
 			}
+			
 			//We've found the end of that chunk, see if it's bigger than what we have on file
 			if (free > maxFreeSize){
 				maxFreeSize = free;
@@ -75,11 +78,19 @@ class threadedAllocationGarbage extends Thread
 				continue;
 			
 			//Find out what ID the job is, and how big it is
-			int jobID = this.memoryBlock[maxFreeBeginning + maxFreeSize + 1];
+			//Make it safe though - if we reach the end of the array, we don't
+			//want to cause an out-of-bounds exception
+			int jobIndex = maxFreeBeginning + maxFreeSize + 1;
+			int jobID;
+			if (jobIndex < this.memoryBlock.length)
+				jobID = this.memoryBlock[maxFreeBeginning + maxFreeSize + 1];
+			else
+				continue;
 			
 			int jobSize = 0;
 			int counter = maxFreeBeginning + maxFreeSize;
-			while (this.memoryBlock[counter] == jobID){
+			//Note that the logic must be in this order to short-circuit if it would cause an array-out-of-bounds
+			while (counter < this.memoryBlock.length && this.memoryBlock[counter] == jobID){
 				counter++;
 				jobSize++;
 			}
@@ -88,7 +99,8 @@ class threadedAllocationGarbage extends Thread
 			//Note that we need to lock out the allocation to prevent a race
 			synchronized (this.memoryBlock) {
 				//Pause the job operation
-				jobArray[jobID].pause();
+				System.out.println("Job ID about to pause: " + jobID );
+				jobArray[jobID - 1].pause();
 				
 				//Write the job into the free space
 				int memoryLoc = maxFreeBeginning;
@@ -99,10 +111,10 @@ class threadedAllocationGarbage extends Thread
 				}
 				
 				//Inform the job of its new beginning location
-				jobArray[jobID].setBeginningLocation(maxFreeBeginning);
+				jobArray[jobID - 1].setBeginningLocation(maxFreeBeginning);
 				
 				//Restart the job
-				jobArray[jobID].resume();
+				jobArray[jobID - 1].resume();
 				
 				//Write the remaining memory as free
 				counter = 0;

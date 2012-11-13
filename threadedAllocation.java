@@ -13,7 +13,7 @@ public class threadedAllocation implements baseAlgorithm{
 		memoryBlock = new int[memorySize];
 		
 		this.garbageThread = new threadedAllocationGarbage(this.memoryBlock, 20, this.jobArray);
-		this.garbageThread.run();
+		this.garbageThread.start();
 		
 		// Set up the array of job references
 		jobArray = new Job[memoryManagement.JOBAMOUNT];
@@ -41,8 +41,10 @@ public class threadedAllocation implements baseAlgorithm{
 				free += 1;
 			}
 
-			if (free >= blockSize)
+			if (free >= blockSize){
+				System.out.println("Found a block of size " + blockSize + " at " + beginningLoc);
 				return beginningLoc;
+			}
 		}
 		//Once the above loop has exited, we've run out of locations to check
 		return -1;
@@ -51,6 +53,7 @@ public class threadedAllocation implements baseAlgorithm{
 	public void allocate(int jobID, int jobSize, int jobLength ){
 		/* Over-rides allocate() of baseAlgorithm */
 		try{
+			System.err.println("Allocating job with ID " + jobID);
 			Method deallocateMethod = this.getClass().getMethod("deallocate", new Class[]{int.class, int.class});
 			
 			//Loop until we get a block big enough for our job
@@ -65,9 +68,8 @@ public class threadedAllocation implements baseAlgorithm{
 				memoryBlock[beginningLocation + x] = jobID;
 			}
 	
-			//TODO: Code to start the job
 			Job newJob = new Job(jobLength, jobID, jobSize, beginningLocation, deallocateMethod, this);
-			jobArray[jobID] = newJob;
+			jobArray[jobID - 1] = newJob;
 			newJob.start();
 		} catch (Exception e){
 			System.out.println("Could not allocate job with ID " + jobID);
@@ -76,7 +78,7 @@ public class threadedAllocation implements baseAlgorithm{
 
 	public void deallocate(int jobSize, int beginningLocation){
 		/* Over-rides deallocate() of baseAlgorithm */
-
+		
 		//Simple algorithm, basically just mark the memory as cleared.
 		for (int x = 0; x < jobSize; x++)
 		{

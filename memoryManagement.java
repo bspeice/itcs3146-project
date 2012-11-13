@@ -30,7 +30,8 @@ public class memoryManagement{
 		int[] time = new int[JOBAMOUNT];
 		
 		//******Add your algorithm class here******//
-		baseAlgorithm alg = new dummyAlgorithm(MEMORYSIZE);
+		//baseAlgorithm alg = new dummyAlgorithm(MEMORYSIZE);
+		threadedAllocation Bradlee_Speice = new threadedAllocation(MEMORYSIZE);
 		
 		//Gets a file name, else creates five random jobs
 		do{							
@@ -43,7 +44,7 @@ public class memoryManagement{
 	
 		//Create random jobs or read from the file and create jobs
 		if(read.equals("")){
-			System.out.print("Creating "+JOBAMOUNT+" random jobs...");
+			System.out.print("Creating " + JOBAMOUNT + " random jobs...");
 			jobLength = JOBAMOUNT;
 			for(int i = 0; i < jobLength; i++){
 				id[i] = i+1;
@@ -67,15 +68,21 @@ public class memoryManagement{
 		}
 		
 		//Send jobs to algorithm, time is calculated and printed out after completion
-		System.out.print("Sending jobs to algorithm...");
+		System.out.print("Sending jobs to threaded allocation algorithm...");
 		timeStart = System.currentTimeMillis();
-		for(int i = 0; i < jobLength; i++){
-			alg.allocate(id[i], size[i], time[i]);
+		//Note that we use `jobLength - 1` to compensate for the id above
+		for(int i = 0; i < jobLength - 1; i++){
+			Bradlee_Speice.allocate(id[i], size[i], time[i]);
 		}
 		timeEnd = System.currentTimeMillis() - timeStart;
 		System.out.println("complete");
-		System.out.println("Elapsed time for algorithm to complete "+ jobLength+" jobs is "+timeEnd+" milliseconds");
+		System.out.println("Elapsed time for threaded allocation algorithm to complete " + jobLength +
+							" jobs is " + timeEnd + " milliseconds");
+		
+		//Put other algorithms here.
 		
 		System.out.println("Completed Successfully");
+		//Forcibly close down all threads
+		System.exit(0);
 	}
 }

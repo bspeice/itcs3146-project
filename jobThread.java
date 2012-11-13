@@ -21,10 +21,12 @@ public class jobThread extends Thread {
 		this.parentAlgorithm = parentClass;
 		this.elapsedTime = 0;
 		this.isPaused = false;
-		this.startTime = 0;
+		this.startTime = System.currentTimeMillis();
 		this.jobID = jobID;
 		this.jobSize = jobSize;
 		this.beginningLocation = beginningLocation;
+		
+		this.jobDone = false;
 	}
 	
 	public void setBeginning(int newBeginning){
