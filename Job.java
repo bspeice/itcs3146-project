@@ -38,5 +38,9 @@ public class Job {
 		}
 	}
 	
+	public void setBeginningLocation(int newBeginning)
+	{
+		myThread.setBeginning(newBeginning);
+	}
 	
 }

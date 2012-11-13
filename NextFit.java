@@ -15,7 +15,7 @@ class NextFit implements baseAlgorithm
 					startLoc,
 					endLoc,
 					blkSize,
-					memSize = memoryManagement.memory,
+					memSize = memoryManagement.MEMORYSIZE,
 					active,
 					noJobs=0,
 					s1=0,

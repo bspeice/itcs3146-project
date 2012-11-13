@@ -9,12 +9,11 @@ import java.util.StringTokenizer;
 
 public class memoryManagement{
 
-	public static int memory = 1024;
-
+	static final int JOBAMOUNT = 1000;
+	static final int MEMORYSIZE = 10000;
+	
 	public static void main(String args[])throws Exception{
-		final int JOBAMOUNT = 1000;
-		final int MEMORYSIZE = 10000;
-		
+				
 		File file = new File("null");
 		Scanner keyboard = new Scanner(System.in);
 		Scanner fileScan;

@@ -1,8 +1,7 @@
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class jobThread extends Thread {
-	private final int sleepResolution = 200; //Milliseconds
+	private final int sleepResolution = 20; //Milliseconds
 	private long jobTime; //Milliseconds
 	private long elapsedTime;
 	private boolean isPaused, pauseStateChanged;
@@ -26,6 +25,10 @@ public class jobThread extends Thread {
 		this.jobID = jobID;
 		this.jobSize = jobSize;
 		this.beginningLocation = beginningLocation;
+	}
+	
+	public void setBeginning(int newBeginning){
+		this.beginningLocation = newBeginning;
 	}
 	
 	public void pause(){
