@@ -4,6 +4,8 @@
 	this class sets up a First Fit memory scheme
 */
 
+import java.lang.reflect.*;
+
 //this section sets up the Car class
 class FirstFit implements baseAlgorithm
 {
@@ -15,7 +17,7 @@ class FirstFit implements baseAlgorithm
 					startLoc,
 					endLoc,
 					blkSize,
-					memSize,
+					memSize = memoryManagement.MEMORYSIZE,
 					active,
 					noJobs=0,
 					s1=0,
@@ -26,9 +28,8 @@ class FirstFit implements baseAlgorithm
 	private int[] memory = new int[memSize];
 	
 	//this is a no argument constructor
-	public FirstFit(int memSize)
+	public FirstFit()
 	{
-		this.memSize = memSize;
 		memTable[0][0]=0;				//job number
 		memTable[0][1]=0;				//job size
 		memTable[0][2]=0;				//start location in memory
@@ -46,6 +47,12 @@ class FirstFit implements baseAlgorithm
 		jobTime = jTime;
 		noJobs++;
 		s1=0;
+		
+		//Bradlee's code ***********************************************************************************
+		try
+		{
+			Method deallocateMethod = this.getClass().getMethod("deallocate", new Class[]{int.class, int.class});
+
 		
 		//checks to see if the job will fit in memory
 		if(jobSize>memSize)
@@ -70,7 +77,9 @@ class FirstFit implements baseAlgorithm
 					memTable[s1][3] = jobSize-1;
 					memTable[s1][4] = memTable[0][3]-memTable[0][2]+1;
 					memTable[s1][5] = 1;
+					Job newJob = new Job(jobTime, jobId, jobSize, memTable[s1][2], deallocateMethod, this);
 					fillMemory(jobId, jobSize, memTable[s1][2]);
+					newJob.start();
 					memTable[s1+1][0] = 0;
 					memTable[s1+1][1] = 0;
 					memTable[s1+1][2] = memTable[s1][3]+1;
@@ -78,6 +87,7 @@ class FirstFit implements baseAlgorithm
 					memTable[s1+1][4] = memSize-memTable[s1+1][2];
 					memTable[s1+1][5] = -1;
 					tableEntries++;
+					System.out.println(toString());
 					s1=memSize*2;
 				}
 				//runs after the first job and if the only available slot is at the end of memory
@@ -89,7 +99,9 @@ class FirstFit implements baseAlgorithm
 					memTable[s1][3] = jobSize+memTable[s1][2]-1;
 					memTable[s1][4] = memTable[s1][3]-memTable[s1][2]+1;
 					memTable[s1][5] = 1;
+					Job newJob = new Job(jobTime, jobId, jobSize, memTable[s1][2], deallocateMethod, this);
 					fillMemory(jobId, jobSize, memTable[s1][2]);
+					newJob.start();
 					memTable[s1+1][0] = 0;
 					memTable[s1+1][1] = 0;
 					memTable[s1+1][2] = memTable[s1][3]+1;
@@ -97,6 +109,7 @@ class FirstFit implements baseAlgorithm
 					memTable[s1+1][4] = memSize-memTable[s1+1][2];
 					memTable[s1+1][5] = -1;
 					tableEntries++;
+					System.out.println(toString());
 					s1=memSize*2;
 				}
 			}
@@ -106,7 +119,10 @@ class FirstFit implements baseAlgorithm
 				memTable[s1][0] = jobId;
 				memTable[s1][1] = jobSize;
 				memTable[s1][5] = 1;
+				Job newJob = new Job(jobTime, jobId, jobSize, memTable[s1][2], deallocateMethod, this);
 				fillMemory(jobId, jobSize, memTable[s1][2]);
+				newJob.start();
+				System.out.println(toString());
 				s1=memSize*2;
 			}
 			else
@@ -123,7 +139,13 @@ class FirstFit implements baseAlgorithm
 			compMem();
 			allocate(ID, size, jobTime);
 		}
+		} catch (Exception e)
+			{
+				System.out.println("Could not allocate job with ID " + jobId);
+			}
 	}
+	
+	
 	
 	//this method is used if you want to deallocate a job by jobId
 	public void removeJob(int ID)
@@ -147,6 +169,8 @@ class FirstFit implements baseAlgorithm
 		deallocate(jobSize, startLoc);
 	}
 
+
+
 	//this method removes a job it does not check to see if the job exisits
 	public void deallocate(int jobSize, int beginningLocation)
 	//public void removeJob(int ID)
@@ -165,6 +189,7 @@ class FirstFit implements baseAlgorithm
 				s1=memSize*2;
 				jobId=-1;
 				noJobs--;
+				System.out.println("removed job "+memTable[s1][0]);
 			}
 			else
 			{
@@ -178,6 +203,7 @@ class FirstFit implements baseAlgorithm
 	//this method compacts the memory
 	public void compMem()
 	{
+		//System.out.println("Compacting Memory");
 		compMemTest=tableEntries;
 		for(int c=0; c<=compMemTest; c++)
 		{

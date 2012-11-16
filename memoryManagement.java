@@ -9,7 +9,7 @@ import java.util.StringTokenizer;
 
 public class memoryManagement{
 
-	static final int JOBAMOUNT = 1000;
+	static final int JOBAMOUNT = 30;
 	static final int MEMORYSIZE = 10000;
 	
 	public static void main(String args[])throws Exception{
@@ -31,7 +31,9 @@ public class memoryManagement{
 		
 		//******Add your algorithm class here******//
 		//baseAlgorithm alg = new dummyAlgorithm(MEMORYSIZE);
-		threadedAllocation Bradlee_Speice = new threadedAllocation(MEMORYSIZE);
+		//threadedAllocation Bradlee_Speice = new threadedAllocation(MEMORYSIZE);
+		//FirstFit David01 = new FirstFit();
+		NextFit David02 = new NextFit();
 		
 		//Gets a file name, else creates five random jobs
 		do{							
@@ -72,7 +74,9 @@ public class memoryManagement{
 		timeStart = System.currentTimeMillis();
 		//Note that we use `jobLength - 1` to compensate for the id above
 		for(int i = 0; i < jobLength - 1; i++){
-			Bradlee_Speice.allocate(id[i], size[i], time[i]);
+			//Bradlee_Speice.allocate(id[i], size[i], time[i]);
+			//David01.allocate(id[i], size[i], time[i]);
+			David02.allocate(id[i], size[i], time[i]);
 		}
 		timeEnd = System.currentTimeMillis() - timeStart;
 		System.out.println("complete");
