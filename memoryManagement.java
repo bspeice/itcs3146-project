@@ -70,6 +70,9 @@ public class memoryManagement{
 			System.out.println("complete");
 			System.out.println(jobLength+" jobs found on file");
 		}
+                
+                
+                
 		
 		//Send jobs to algorithm, time is calculated and printed out after completion
 		System.out.print("Sending jobs to threaded allocation algorithm...");
@@ -82,17 +85,25 @@ public class memoryManagement{
 		}
 		timeEnd = System.currentTimeMillis() - timeStart;
 		System.out.println("complete");
-		System.out.println("Elapsed time for threaded allocation algorithm to complete " + jobLength +
-							" jobs is " + timeEnd + " milliseconds");
+		System.out.println("Elapsed time for threaded allocation algorithm to complete " + jobLength +                                           
+              " jobs is " + timeEnd + " milliseconds");
+                
+                
+                
+                
+                
 		//***Best Fit (David Weber)***
                 timeStart = System.currentTimeMillis();
                 for(int i = 0; i < jobLength - 1; i++){
-			//David_Weber_BestFit.allocate(id[i], size[i], time[i]);
+			David_Weber_BestFit.allocate(id[i], size[i], time[i]);
 		}
                 timeEnd = System.currentTimeMillis() - timeStart;
                 System.out.println("complete");
 		System.out.println("Elapsed time for threaded best fit allocation algorithm to complete " + jobLength + " jobs is " + timeEnd + " milliseconds");
                 
+                
+                
+                /*
                 //***Worst Fit (David Weber)***
                 timeStart = System.currentTimeMillis();
                 for(int i = 0; i < jobLength - 1; i++){
@@ -101,6 +112,7 @@ public class memoryManagement{
                 timeEnd = System.currentTimeMillis() - timeStart;
                 System.out.println("complete");
 		System.out.println("Elapsed time for threaded worst fit allocation algorithm to complete " + jobLength + " jobs is " + timeEnd + " milliseconds");
+                */
                 
                 //Put other algorithms here.
          

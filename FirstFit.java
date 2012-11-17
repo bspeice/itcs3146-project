@@ -60,7 +60,7 @@ class FirstFit implements baseAlgorithm
 		if(jobSize>memSize)
 		{
 			System.out.println("\n\n*********************************************************"+
-										"         THIS JOB IS TO LARGE TO FIT INTO MEMORY"+
+										"         THIS JOB IS TOO LARGE TO FIT INTO MEMORY"+
 										"*********************************************************");
 			System.exit(0);
 		}
