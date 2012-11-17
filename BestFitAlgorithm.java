@@ -19,8 +19,8 @@ public class BestFitAlgorithm implements baseAlgorithm{
     
     public int getBestSizeIndex(int jobSize)
     {
-        int bestSize = 0;
-        int bestSizeIndex = 0;
+        int bestSize;
+        int bestSizeIndex;
         
         ArrayList<Integer> candidates = new ArrayList<Integer>(); //Dynamically resizable array list for allocation candidates (interleaved with index and memory size)
 
@@ -83,7 +83,8 @@ public class BestFitAlgorithm implements baseAlgorithm{
     {
         int bestSizeIndex = getBestSizeIndex(jobSize);
         
-        if(bestSizeIndex == -1) //No candidates found
+        //No candidates found
+        if(bestSizeIndex == -1) 
         {
             //Try compacting, then attempt to get an index again
             compact(); 
@@ -95,11 +96,13 @@ public class BestFitAlgorithm implements baseAlgorithm{
                 //TODO .....
             }
         }
-        
-        //Allocate the memory
-        for(int i = bestSizeIndex; i < jobSize; i++)
+        else
         {
-            memoryBlock[i] = jobID;
+            //Allocate the memory
+            for(int i = bestSizeIndex; i < jobSize; i++)
+            {
+                memoryBlock[i] = jobID;
+            }
         }
     }
     
