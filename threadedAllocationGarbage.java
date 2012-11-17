@@ -70,6 +70,7 @@ class threadedAllocationGarbage extends Thread
 			 */
 			
 			int[] largestBlockInfo = largestBlock();
+			
 			int maxFreeBeginning = largestBlockInfo[0];
 			int maxFreeSize = largestBlockInfo[1];
 			
@@ -97,29 +98,34 @@ class threadedAllocationGarbage extends Thread
 			
 			//Pause the job, and then relocate it
 			//Note that we need to lock out the allocation to prevent a race
+			int memoryLoc = maxFreeBeginning;
 			synchronized (this.memoryBlock) {
-				//Pause the job operation
-				System.out.println("Job ID about to pause: " + jobID );
-				jobArray[jobID - 1].pause();
+				try{
+					//Pause the job operation - note that we use a try-catch, as the job may disappear on us,
+					//but is not a fatal error.
+					jobArray[jobID].pause();
 				
-				//Write the job into the free space
-				int memoryLoc = maxFreeBeginning;
-				counter = 0;
-				while (counter < jobSize){
-					memoryBlock[memoryLoc] = jobID;
-					counter++;
+					//Write the job into the free space
+					counter = 0;
+					while (counter < jobSize){
+						memoryBlock[memoryLoc] = jobID;
+						counter++;
+					}
+					
+					//Inform the job of its new beginning location
+					jobArray[jobID].setBeginningLocation(maxFreeBeginning);
+					
+					//Restart the job
+					jobArray[jobID].resume();
+				} catch (Exception e){
+					//Job ended before we could clean it up, proceed as if nothing happened.
 				}
-				
-				//Inform the job of its new beginning location
-				jobArray[jobID - 1].setBeginningLocation(maxFreeBeginning);
-				
-				//Restart the job
-				jobArray[jobID - 1].resume();
 				
 				//Write the remaining memory as free
 				counter = 0;
 				while (counter < maxFreeSize){
 					memoryBlock[memoryLoc] = 0;
+					counter++;
 				}
 				
 			}

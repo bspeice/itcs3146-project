@@ -87,7 +87,6 @@ public class jobThread extends Thread {
 			Object[] deallocateArgs = {this.jobSize, this.beginningLocation};
 			//We're done, go ahead and notify our algorithm to clean us up
 			parentAlgorithmDeallocate.invoke(parentAlgorithm, deallocateArgs);
-			
 		} catch (Exception e) {
 			return;
 		}
