@@ -275,9 +275,11 @@ class FirstFit implements baseAlgorithm
 		jobSize=size;
 		startLoc=start;
 		
-		for(int fillCount=startLoc; fillCount<jobSize+startLoc; fillCount++)
-		{
-			memory[fillCount]=jobId;
+		synchronized(memory){
+			for(int fillCount=startLoc; fillCount<jobSize+startLoc; fillCount++)
+			{
+				memory[fillCount]=jobId;
+			}
 		}
 	}
 

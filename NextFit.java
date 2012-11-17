@@ -62,7 +62,7 @@ class NextFit implements baseAlgorithm
 		if(jobSize>memSize)
 		{
 			System.out.println("\n\n*********************************************************"+
-										"         THIS JOB IS TO LARGE TO FIT INTO MEMORY"+
+										"         THIS JOB IS TOO LARGE TO FIT INTO MEMORY"+
 										"*********************************************************");
 			System.exit(0);
 		}
@@ -293,10 +293,11 @@ class NextFit implements baseAlgorithm
 		jobId=job;
 		jobSize=size;
 		startLoc=start;
-		
-		for(int fillCount=startLoc; fillCount<jobSize+startLoc; fillCount++)
-		{
-			memory[fillCount]=jobId;
+		synchronized(memory){
+			for(int fillCount=startLoc; fillCount<jobSize+startLoc; fillCount++)
+			{
+				memory[fillCount]=jobId;
+			}
 		}
 	}
 
