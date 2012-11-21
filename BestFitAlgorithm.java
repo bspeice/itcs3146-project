@@ -5,163 +5,183 @@
  */
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.util.*;
 
 public class BestFitAlgorithm implements baseAlgorithm{
     
     int memoryBlock[];
     private Job[] jobArray = new Job[memoryManagement.JOBAMOUNT+10];
-    ArrayList<Integer> candidates;
-    
+    List<Integer> indices;
+    List<Integer> blocks;
+    int memoryLocation;
+    int bestSize; //The most suitable block size for the job
+    int bestSizeIndex; //The most suitable block size starting index for the job
+
     public BestFitAlgorithm(int memorySize)
     {
         //Initialize memory block to whatever the size is
         memoryBlock = new int[memorySize];
-        System.out.println("The size of the memory is: " + memoryBlock.length);
+        blocks = new ArrayList<>(); //Dynamically resizable array list for allocation candidates (interleaved with index and memory size);
+        indices = new ArrayList<>(); //Dynamically resizable array list for allocation candidates (interleaved with index and memory size);
     }
     
-    public int getBestSizeIndex(int jobSize)
+    public int getBestIndex(int jobSize)
     {
-        int bestSize; //The most suitable block size for the job
-        int bestSizeIndex; //The most suitable block size starting index for the job
+        memoryLocation = 0;
         
-        System.out.println("The size of the job is: " + jobSize);
+        indices.clear();
+        blocks.clear();
         
-        candidates = new ArrayList<Integer>(); //Dynamically resizable array list for allocation candidates (interleaved with index and memory size)
-
-            int counter = 0; //Counter for measuring unallocated memory
-            //Scan through memory block and get free blocks. Add candidates for allocation to array list
-            for(int i = 0; i < memoryBlock.length; i++)
-            {
-                //If position in memory block here is 0, iterate from that index and count up sequential 0's (free space)
-                if(memoryBlock[i] == 0)
-                {
-                    for(int j = i; j < memoryBlock.length - i; j++)
-                    {
-                        if(memoryBlock[j] == 0)
-                        {
-                            counter++;
-                        }
-                    }
-                    if(counter == jobSize)
-                    {
-                        candidates.add(i); //Store index
-                        candidates.add(counter); //Store size of free memory chunk
-                    }
-                    else if(counter >= jobSize)
-                    {
-                        candidates.add(i); //Store index
-                        candidates.add(counter); //Store size of free memory chunk
-                    }
-                    //System.out.println("The size of the counter is: " + counter);
-                    counter = 0;
-                }
-            }
-            for(int i = 0; i < candidates.size(); i++)
-            {
-                System.out.println("Candidate index: " + candidates.get(i));
-                System.out.println("Candidate size: " + candidates.get(i+1));
-            }
-            
-            //Iterate through candidate sizes
-            bestSizeIndex = candidates.get(0).intValue(); //Initialize best index to first spot in array list
-            
-            bestSize = candidates.get(1).intValue(); //Initialize bestSize to first space size in candidate 
-            
-            //Iterate through sizes and find the best fit
-            for(int i = 1; i < candidates.size(); i=i+2)
-            {
-                //Best possible case: job size = free block size (you're done)
-                if(candidates.get(i).intValue() == jobSize)
-                {
-                    bestSizeIndex = i - 1;
-                    System.out.println("The best size index is: " +  bestSizeIndex);
-                    return bestSizeIndex; //You're done. Return the value.
-                }
-                //If the current size is less than the previous best size, make this the new best size
-                else if(candidates.get(i).intValue() < bestSize)
-                {
-                    bestSize = candidates.get(i+1).intValue();
-                    bestSizeIndex = i - 1;
-                    System.out.println("The best size index is: " +  bestSizeIndex);
-                }
-            }
-            System.out.println("The best size is: " +  bestSize);
-            
-        //No candidates
-        if(candidates.isEmpty())
+        while (memoryLocation < this.memoryBlock.length)
         {
-            System.out.println("No best size index");
-            return -1;
+            if (memoryBlock[memoryLocation] != 0){
+                    memoryLocation++;
+                    continue;
+            }
+
+            int beginningLoc = memoryLocation;
+            int free = 0;
+            
+            while (memoryLocation < this.memoryBlock.length && memoryBlock[memoryLocation] == 0)
+            {
+                memoryLocation++;
+                free++;
+            }
+
+            if (free >= jobSize){
+                //System.out.println("Found a block of size " + free + " at " + beginningLoc);
+                blocks.add(free);
+                indices.add(beginningLoc);
+            }
         }
         
-        return bestSizeIndex;  
+        //System.out.println("Size of indices array: " + indices.size());
+        //System.out.println("Size of sizes array: " + blocks.size());
+        
+        for(int i = 0; i < blocks.size(); i++)
+        {
+            //System.out.println("Index: " + indices.get(i));
+            //System.out.println("Size: " + blocks.get(i));
+        }
+        
+        int bestIndex = -1;
+        int bSize = blocks.get(0).intValue();
+        
+
+        //GET BEST INDEX
+        for(int i = 0; i < blocks.size(); i++)
+        {
+            //BEST CASE
+            if(blocks.get(i).intValue() == jobSize)
+            {
+                //Best possible fit. You're done.
+                //System.out.println("Best Case");
+                bestIndex = indices.get(i).intValue();
+            }
+            else if((blocks.get(i).intValue() <= bSize && blocks.get(i).intValue() >= jobSize) || blocks.get(i).intValue() > -1)
+            {
+                bestIndex = indices.get(i).intValue();
+            }
+        }
+        
+        //System.out.println("bestIndex: " + bestIndex);
+        //System.out.println("bSize: " + bSize);
+        
+        return bestIndex;
     }
 
     @Override
     public void allocate(int jobID, int jobSize, int jobTime)
-    {
+    {  
         try
         {
             Method deallocateMethod = this.getClass().getMethod("deallocate", new Class[]{int.class, int.class});
-
-            //checks to see if the job will fit in memory
-            if(jobSize>memoryBlock.length)
+            
+            bestSizeIndex = this.getBestIndex(jobSize);
+            
+            if(jobSize > memoryBlock.length)
             {
-                    System.out.println("This job is too large");
-                    System.exit(0);
+                //System.out.println("Job is too large for current memory size");
             }
-
-            int bestSizeIndex = getBestSizeIndex(jobSize);
-
-            //No candidates found
-            if(bestSizeIndex == -1) 
+            
+            if(bestSizeIndex == -1)
             {
-                System.out.println("No candidates found...attempting to compact");
-                //Try compacting, then attempt to get an index again
-                compact();
-
-                bestSizeIndex = getBestSizeIndex(jobSize);
-
-                //Compacting still didn't produce an appropriate block
-                if(bestSizeIndex == -1)
-                {
-                    //TODO .....
-                }
+                //Compact and try again
+                //System.out.println("Compacting memory...");
+                this.compact();
+                bestSizeIndex = this.getBestIndex(jobSize);
             }
             else
             {
-                //Allocate the memory
-                for(int i = bestSizeIndex; i < jobSize; i++)
-                {
-                    memoryBlock[i] = jobID;
-                }
+                //System.out.println("The size of the job is: " + jobSize);
+                //System.out.println("The best size index is: " + bestSizeIndex);
                 
-                System.out.println("Successfully allocated!");
-                
-                for(int i = 0; i < memoryBlock.length; i++)
+                synchronized(memoryBlock)
                 {
-                    System.out.println("Job at position " + i + "in memoryblock: " + memoryBlock[i]);
+                    for(int i = bestSizeIndex; i < jobSize + bestSizeIndex; i++)
+                    {
+                        //System.out.println("Writing jobID: " + jobID + " to position " + i + " in memory block!");
+                        this.memoryBlock[i] = jobID;
+                    }
                 }
-            }
 
-        }   
+                //System.out.println("Successfully allocated! Starting job...");
+                
+                Job newJob = new Job(jobSize, jobID, jobSize, bestSizeIndex, deallocateMethod, this);
         
+                jobArray[jobID] = newJob;
+
+                newJob.start();
+                
+                //System.out.println("Job started!");
+            }
+        }   
         catch (Exception e)
         {
-            System.out.println("Could not allocate job with ID " + jobID);
+            //System.out.println("Could not allocate job with ID " + jobID);
         }
     }
-    
+    /*
+     * This method gathers all occupied memory and stores it contiguously in an array list of blocks.
+     * After that, it rewrites the memoryBlock array by writing the memory in contiguous order, and then
+     * filling in the rest of the memory with 0's
+     */
     public void compact()
     {
-        //TODO: Compact memory if no suitable allocation candidates are found on the first pass
+        List<Integer> takenBlocks = new ArrayList<>();
+        
+        memoryLocation = 0;
+        
+        //Gather allocated memory
+        while(memoryLocation < this.memoryBlock.length && memoryBlock[memoryLocation] != 0)
+        {
+            takenBlocks.add(memoryBlock[memoryLocation]);
+            memoryLocation++;
+        }
+       
+        for(int i = 0; i < takenBlocks.size(); i++)
+        {
+            this.memoryBlock[i] = takenBlocks.get(i).intValue();
+        }
+        
+        for(int i = takenBlocks.size(); i < this.memoryBlock.length; i++)
+        {
+            this.memoryBlock[i] = 0;
+        }
+        
+        /*System.out.println("Successfully compacted!");
+        
+        if(takenBlocks.isEmpty())
+        {
+            System.out.println("Cannot compact!");
+        }
+        */
     }
     
     @Override
     public void deallocate(int jobSize, int beginningLocation)
     {
-        for(int i = beginningLocation; i < jobSize; i++)
+        for(int i = beginningLocation; i < jobSize + beginningLocation; i++)
         {
             memoryBlock[i] = 0;
         }

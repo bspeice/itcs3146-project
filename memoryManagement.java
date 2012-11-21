@@ -88,35 +88,26 @@ public class memoryManagement{
 		System.out.println("Elapsed time for threaded allocation algorithm to complete " + jobLength +                                           
               " jobs is " + timeEnd + " milliseconds");
                 
-                
-                
-                
-                
 		//***Best Fit (David Weber)***
-                timeStart = System.currentTimeMillis();
+                timeStart = System.currentTimeMillis();  
                 for(int i = 0; i < jobLength - 1; i++){
 			David_Weber_BestFit.allocate(id[i], size[i], time[i]);
 		}
-                timeEnd = System.currentTimeMillis() - timeStart;
-                System.out.println("complete");
-		System.out.println("Elapsed time for threaded best fit allocation algorithm to complete " + jobLength + " jobs is " + timeEnd + " milliseconds");
                 
+                timeEnd = System.currentTimeMillis() - timeStart;  
+		System.out.println("Elapsed time for best fit allocation algorithm to complete " + jobLength + " jobs is " + timeEnd + " milliseconds");
                 
-                
-                /*
                 //***Worst Fit (David Weber)***
-                timeStart = System.currentTimeMillis();
+                timeStart = System.currentTimeMillis();  
                 for(int i = 0; i < jobLength - 1; i++){
-                        //David_Weber_WorstFit.allocate(id[i], size[i], time[i]);
+			David_Weber_WorstFit.allocate(id[i], size[i], time[i]);
 		}
-                timeEnd = System.currentTimeMillis() - timeStart;
-                System.out.println("complete");
-		System.out.println("Elapsed time for threaded worst fit allocation algorithm to complete " + jobLength + " jobs is " + timeEnd + " milliseconds");
-                */
                 
+                timeEnd = System.currentTimeMillis() - timeStart;  
+		System.out.println("Elapsed time for worst fit allocation algorithm to complete " + jobLength + " jobs is " + timeEnd + " milliseconds");
+               
                 //Put other algorithms here.
          
-                
 		System.out.println("Completed Successfully");
 		//Forcibly close down all threads
 		System.exit(0);
