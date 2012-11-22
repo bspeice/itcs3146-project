@@ -127,10 +127,10 @@ public class memoryManagement{
 		out.println("---------------------------");
 		out.println("Final Times (All times in milliseconds)");
 		out.println("Threaded time: " + timeEnd[0]);
-		out.println("Best fit time: " + timeEnd[0]);
-		out.println("Worst fit time: " + timeEnd[0]);
-		out.println("First fit time: " + timeEnd[0]);
-		out.println("Next fit time: " + timeEnd[0]);
+		out.println("Best fit time: " + timeEnd[1]);
+		out.println("Worst fit time: " + timeEnd[2]);
+		out.println("First fit time: " + timeEnd[3]);
+		out.println("Next fit time: " + timeEnd[4]);
 		out.close();
 		System.out.println("complete");
 		
