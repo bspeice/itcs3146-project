@@ -95,8 +95,8 @@ class NextFit implements baseAlgorithm
 					memTable[currentPosition][3] = jobSize-1;
 					memTable[currentPosition][4] = memTable[0][3]-memTable[0][2]+1;
 					memTable[currentPosition][5] = 1;
-					Job newJob = new Job(jobTime, jobId, jobSize, memTable[s1][2], deallocateMethod, this);
-					fillMemory(jobId, jobSize, memTable[s1][2]);
+					Job newJob = new Job(jobTime, jobId, jobSize, memTable[currentPosition][2], deallocateMethod, this);
+					fillMemory(jobId, jobSize, memTable[currentPosition][2]);
 					jobArray[jobId - 1] = newJob;
 					newJob.start();
 					memTable[currentPosition+1][0] = 0;
@@ -123,8 +123,8 @@ class NextFit implements baseAlgorithm
 					memTable[currentPosition][3] = jobSize+memTable[currentPosition][2]-1;
 					memTable[currentPosition][4] = memTable[currentPosition][3]-memTable[currentPosition][2]+1;
 					memTable[currentPosition][5] = 1;
-					Job newJob = new Job(jobTime, jobId, jobSize, memTable[s1][2], deallocateMethod, this);
-					fillMemory(jobId, jobSize, memTable[s1][2]);
+					Job newJob = new Job(jobTime, jobId, jobSize, memTable[currentPosition][2], deallocateMethod, this);
+					fillMemory(jobId, jobSize, memTable[currentPosition][2]);
 					jobArray[jobId - 1] = newJob;
 					newJob.start();
 					memTable[currentPosition+1][0] = 0;
@@ -149,8 +149,8 @@ class NextFit implements baseAlgorithm
 				memTable[currentPosition][0] = jobId;
 				memTable[currentPosition][1] = jobSize;
 				memTable[currentPosition][5] = 1;
-				Job newJob = new Job(jobTime, jobId, jobSize, memTable[s1][2], deallocateMethod, this);
-				fillMemory(jobId, jobSize, memTable[s1][2]);
+				Job newJob = new Job(jobTime, jobId, jobSize, memTable[currentPosition][2], deallocateMethod, this);
+				fillMemory(jobId, jobSize, memTable[currentPosition][2]);
 				jobArray[jobId - 1] = newJob;
 				newJob.start();
 				currentPosition++;
@@ -293,12 +293,14 @@ class NextFit implements baseAlgorithm
 		}
 		tableEntries=tableEntries-s1;
 		
+		synchronized(memTable){
 		if(memTable[tableEntries-2][5]==0 && memTable[tableEntries-1][5]==-1)
 		{
 			memTable[tableEntries-2][3]=memTable[tableEntries-1][3];
 			memTable[tableEntries-2][4]=memTable[tableEntries-1][4]+memTable[tableEntries-2][4];
 			memTable[tableEntries-2][5]=-1;
 			tableEntries--;
+		}
 		}
 	}
 	
