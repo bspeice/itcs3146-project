@@ -44,6 +44,7 @@ class FirstFit implements baseAlgorithm
 	//this method sets the job up 
 	public void allocate(int ID, int size, int jTime)
 	{
+		//synchronized(memTable){
 		jobId = ID;
 		jobSize = size;
 		jobTime = jTime;
@@ -82,6 +83,7 @@ class FirstFit implements baseAlgorithm
 				//runs only for the first job
 				if(noJobs==1)
 				{
+					synchronized(memTable){
 					memTable[s1][0] = jobId;
 					memTable[s1][1] = jobSize;
 					memTable[s1][2] = 0;
@@ -102,10 +104,12 @@ class FirstFit implements baseAlgorithm
 					jobLoaded=1;
 					System.out.println("add job "+jobId+toString());
 					s1=memSize*2;
+					}
 				}
 				//runs after the first job and if the only available slot is at the end of memory
 				else
 				{
+					synchronized(memTable){
 					memTable[s1][0] = jobId;
 					memTable[s1][1] = jobSize;
 					memTable[s1][2] = memTable[s1-1][3]+1;
@@ -126,11 +130,13 @@ class FirstFit implements baseAlgorithm
 					jobLoaded=1;
 					System.out.println("add job "+jobId+toString());
 					s1=memSize*2;
+					}
 				}
 			}
 			//checks for first available free block that has been deallocated
 			else if(memTable[s1][4]>=jobSize && memTable[s1][5]==0)
 			{
+				synchronized(memTable){
 				memTable[s1][0] = jobId;
 				memTable[s1][1] = jobSize;
 				memTable[s1][5] = 1;
@@ -141,6 +147,7 @@ class FirstFit implements baseAlgorithm
 				jobLoaded=1;
 				System.out.println("add job "+jobId+toString());
 				s1=memSize*2;
+				}
 			}
 			else
 			{
@@ -165,6 +172,7 @@ class FirstFit implements baseAlgorithm
 			{
 				System.out.println("Could not allocate job with ID " + jobId);
 			}
+		//}
 	}
 	
 	
@@ -175,28 +183,32 @@ class FirstFit implements baseAlgorithm
 	//this method removes a job it does not check to see if the job exisits
 	public void deallocate(int jSize, int beginningLocation)
 	{
+		synchronized(memTable){
+		int deallocates1=0;
 		jobSize = jSize;
 		startLoc = beginningLocation;
-		s1=0;
+		System.out.println("jSize= "+jobSize+"  startLoc= "+startLoc);
+		//s1=0;
 		do
 		{
-			if(memTable[s1][2] == startLoc)
+			if(memTable[deallocates1][2] == startLoc)
 			{
-				
-				System.out.println(startLoc+"   removed job "+memTable[s1][0]);
-				memTable[s1][0] = 0;
-				memTable[s1][1] = 0;
-				memTable[s1][5] = 0;
-				System.out.println(memTable[s1][0]+"  "+memTable[s1][1]+"  "+memTable[s1][5]);
+				System.out.println(memTable[deallocates1][0]+"  "+memTable[deallocates1][1]+"  "+memTable[deallocates1][5]);
+				System.out.println(startLoc+"   removed job "+memTable[deallocates1][0]);
+				memTable[deallocates1][0] = 0;
+				memTable[deallocates1][1] = 0;
+				memTable[deallocates1][5] = 0;
+				System.out.println(memTable[deallocates1][0]+"  "+memTable[deallocates1][1]+"  "+memTable[deallocates1][5]);
 				System.out.println(toString());
 				noJobs--;
-				s1=memSize*2;
+				deallocates1=memSize*2;
 			}
 			else
 			{
-				s1++;
+				deallocates1++;
 			}
-		}while (s1<tableEntries);
+		}while (deallocates1<tableEntries);
+		}
 	}
 	
 	//this method compacts the memory
@@ -210,6 +222,7 @@ class FirstFit implements baseAlgorithm
 			//comdines them
 			if(memTable[c][5]==0 && memTable[c+1][5]==0)
 			{
+				synchronized(memTable){
 				tempVal[0] = memTable[c+1][0];
 				tempVal[1] = memTable[c+1][1];
 				tempVal[2] = memTable[c+1][2];
@@ -244,6 +257,7 @@ class FirstFit implements baseAlgorithm
 				memTable[tableEntries-1][4]=-1;
 				memTable[tableEntries-1][5]=-1;
 				c--;
+				}
 			}
 		}
 		

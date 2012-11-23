@@ -15,6 +15,7 @@ class NextFit implements baseAlgorithm
 					jobSize,
 					jobTime,
 					startLoc,
+					fillLoc,
 					endLoc,
 					blkSize,
 					memSize = memoryManagement.MEMORYSIZE,
@@ -25,10 +26,12 @@ class NextFit implements baseAlgorithm
 					positionToCompress=0,
 					loopCount,
 					compMemTest=0,
+					jobLoaded=0,
 					tableEntries=1;
 	private int[] tempVal = new int[6];
 	private int[][] memTable = new int[memSize+2][6];
 	private int[] memory = new int[memSize];
+	private Job[] jobArray = new Job[memoryManagement.JOBAMOUNT+10];
 	
 	//this is a no argument constructor
 	public NextFit()
@@ -45,6 +48,7 @@ class NextFit implements baseAlgorithm
 	//this method sets the job up 
 	public void allocate(int ID, int size, int jTime)
 	{
+		//synchronized(memTable){
 		jobId = ID;
 		jobSize = size;
 		jobTime = jTime;
@@ -57,7 +61,7 @@ class NextFit implements baseAlgorithm
 		{
 			Method deallocateMethod = this.getClass().getMethod("deallocate", new Class[]{int.class, int.class});
 
-
+		
 		//checks to see if the job will fit in memory
 		if(jobSize>memSize)
 		{
@@ -66,24 +70,34 @@ class NextFit implements baseAlgorithm
 										"*********************************************************");
 			System.exit(0);
 		}
-
+		
+		
+		
+		
+		
+		
+		//this will loop until job is loaded into memory
+		do
+		{
+		
 		//this section looks for a place to put the new job
 		do
 		{
-			if(memTable[currentPosition][5]==-1 && memTable[currentPosition][4]>=jobSize && 
-				memTable[currentPosition][3]==memSize-1)
+			if(memTable[currentPosition][5]==-1 && memTable[currentPosition][4]>=jobSize && memTable[currentPosition][3]==memSize-1)
 			{
 				//runs only for the first job
 				if(noJobs==1)
 				{
+					synchronized(memTable){
 					memTable[currentPosition][0] = jobId;
 					memTable[currentPosition][1] = jobSize;
 					memTable[currentPosition][2] = 0;
 					memTable[currentPosition][3] = jobSize-1;
 					memTable[currentPosition][4] = memTable[0][3]-memTable[0][2]+1;
 					memTable[currentPosition][5] = 1;
-					Job newJob = new Job(jobTime, jobId, jobSize, memTable[currentPosition][2], deallocateMethod, this);
-					fillMemory(jobId, jobSize, memTable[currentPosition][2]);
+					Job newJob = new Job(jobTime, jobId, jobSize, memTable[s1][2], deallocateMethod, this);
+					fillMemory(jobId, jobSize, memTable[s1][2]);
+					jobArray[jobId - 1] = newJob;
 					newJob.start();
 					memTable[currentPosition+1][0] = 0;
 					memTable[currentPosition+1][1] = 0;
@@ -94,19 +108,24 @@ class NextFit implements baseAlgorithm
 					currentPosition++;
 					positionToCompress=currentPosition;
 					tableEntries++;
+					jobLoaded=1;
+					System.out.println("add job "+jobId+toString());
 					s1=memSize*2;
+					}
 				}
 				//runs after the first job and if the only available slot is at the end of memory
 				else
 				{
+					synchronized(memTable){
 					memTable[currentPosition][0] = jobId;
 					memTable[currentPosition][1] = jobSize;
 					memTable[currentPosition][2] = memTable[currentPosition-1][3]+1;
 					memTable[currentPosition][3] = jobSize+memTable[currentPosition][2]-1;
 					memTable[currentPosition][4] = memTable[currentPosition][3]-memTable[currentPosition][2]+1;
 					memTable[currentPosition][5] = 1;
-					Job newJob = new Job(jobTime, jobId, jobSize, memTable[currentPosition][2], deallocateMethod, this);
-					fillMemory(jobId, jobSize, memTable[currentPosition][2]);
+					Job newJob = new Job(jobTime, jobId, jobSize, memTable[s1][2], deallocateMethod, this);
+					fillMemory(jobId, jobSize, memTable[s1][2]);
+					jobArray[jobId - 1] = newJob;
 					newJob.start();
 					memTable[currentPosition+1][0] = 0;
 					memTable[currentPosition+1][1] = 0;
@@ -116,24 +135,32 @@ class NextFit implements baseAlgorithm
 					memTable[currentPosition+1][5] = -1;
 					tableEntries++;
 					currentPosition++;
+					jobLoaded=1;
 					positionToCompress=currentPosition;
+					System.out.println("add job "+jobId+toString());
 					s1=memSize*2;
+					}
 				}
 			}
 			//checks for first available free block that has been deallocated
 			else if(memTable[currentPosition][4]>=jobSize && memTable[currentPosition][5]==0)
 			{
+				synchronized(memTable){
 				memTable[currentPosition][0] = jobId;
 				memTable[currentPosition][1] = jobSize;
 				memTable[currentPosition][5] = 1;
-				Job newJob = new Job(jobTime, jobId, jobSize, memTable[currentPosition][2], deallocateMethod, this);
-				fillMemory(jobId, jobSize, memTable[currentPosition][2]);
+				Job newJob = new Job(jobTime, jobId, jobSize, memTable[s1][2], deallocateMethod, this);
+				fillMemory(jobId, jobSize, memTable[s1][2]);
+				jobArray[jobId - 1] = newJob;
 				newJob.start();
 				currentPosition++;
+				jobLoaded=1;
 				positionToCompress=currentPosition;
+				System.out.println("add job "+jobId+toString());
 				s1=memSize*2;
+				}
 			}
-			else if(currentPosition==tableEntries-1)
+			else if (currentPosition==tableEntries-1)
 			{
 				currentPosition=0;
 				s1++;
@@ -143,83 +170,71 @@ class NextFit implements baseAlgorithm
 				s1++;
 				currentPosition++;
 			}
-			
 		}while(s1<tableEntries);
-
-		
-		//if job will not fit this section will compress memory and try placing the job again
+	
+		//if job will not fit this section will compress memory
 		if(s1==tableEntries)
 		{
 			noJobs=noJobs-1;
 			compMem();
 			currentPosition=0;
 			positionToCompress=0;
-			allocate(ID, size, jobTime);
 		}
+		
+		}while(jobLoaded==0);
+		s1=0;
+		jobLoaded=0;
+		
+		
+		
 		} catch (Exception e)
 			{
 				System.out.println("Could not allocate job with ID " + jobId);
 			}
-		
-		
+		//}
 	}
 	
 	
 	
-	
-	//this method is used if you want to deallocate a job by jobId
-	public void removeJob(int ID)
-	{
-		jobId = ID;
-		s1=0;
-		do
-		{
-			if(memTable[s1][0] == jobId)
-			{
-				jobSize = memTable[s1][1];
-				startLoc = memTable[s1][2];
-				s1=memSize*2;
-			}
-			else
-			{
-				s1++;
-			}
-			
-		}while (s1<tableEntries);
-		deallocate(jobSize, startLoc);
-	}
+
+
 
 	//this method removes a job it does not check to see if the job exisits
-	public void deallocate(int jobSize, int beginningLocation)
-	//public void removeJob(int ID)
+	public void deallocate(int jSize, int beginningLocation)
 	{
-		jobId = 0;
-		jobSize = jobSize;
+		System.out.println("jSize= "+jSize+"  startLoc= "+beginningLocation);
+		synchronized(memTable){
+		int deallocates1=0;
+		jobSize = jSize;
 		startLoc = beginningLocation;
-		s1=0;
+		System.out.println("jSize= "+jobSize+"  startLoc= "+startLoc);
+		//s1=0;
 		do
 		{
-			if(memTable[s1][2] == startLoc)
+			if(memTable[deallocates1][2] == startLoc)
 			{
-				memTable[s1][0] = 0;
-				memTable[s1][1] = 0;
-				memTable[s1][5] = 0;
-				s1=memSize*2;
-				jobId=-1;
+				System.out.println(memTable[deallocates1][0]+"  "+memTable[deallocates1][1]+"  "+memTable[deallocates1][5]);
+				System.out.println(startLoc+"   removed job "+memTable[deallocates1][0]);
+				memTable[deallocates1][0] = 0;
+				memTable[deallocates1][1] = 0;
+				memTable[deallocates1][5] = 0;
+				System.out.println(memTable[deallocates1][0]+"  "+memTable[deallocates1][1]+"  "+memTable[deallocates1][5]);
+				System.out.println(toString());
 				noJobs--;
+				deallocates1=memSize*2;
 			}
 			else
 			{
-				s1++;
+				deallocates1++;
 			}
-		
-		}while (s1<tableEntries);
-		
+		}while (deallocates1<tableEntries);
+		}
 	}
 	
 	//this method compacts the memory
 	public void compMem()
 	{
+		//System.out.println("Compacting Memory");
 		compMemTest=tableEntries;
 		for(int c=0; c<=compMemTest; c++)
 		{
@@ -227,6 +242,7 @@ class NextFit implements baseAlgorithm
 			//comdines them
 			if(memTable[c][5]==0 && memTable[c+1][5]==0)
 			{
+				synchronized(memTable){
 				tempVal[0] = memTable[c+1][0];
 				tempVal[1] = memTable[c+1][1];
 				tempVal[2] = memTable[c+1][2];
@@ -261,6 +277,7 @@ class NextFit implements baseAlgorithm
 				memTable[tableEntries-1][4]=-1;
 				memTable[tableEntries-1][5]=-1;
 				c--;
+				}
 			}
 		}
 		
@@ -283,8 +300,6 @@ class NextFit implements baseAlgorithm
 			memTable[tableEntries-2][5]=-1;
 			tableEntries--;
 		}
-		currentPosition = 0;
-		positionToCompress = 0;
 	}
 	
 	//this method fills the memory location with the data
@@ -292,9 +307,10 @@ class NextFit implements baseAlgorithm
 	{
 		jobId=job;
 		jobSize=size;
-		startLoc=start;
+		fillLoc=start;
+		
 		synchronized(memory){
-			for(int fillCount=startLoc; fillCount<jobSize+startLoc; fillCount++)
+			for(int fillCount=fillLoc; fillCount<jobSize+fillLoc; fillCount++)
 			{
 				memory[fillCount]=jobId;
 			}
