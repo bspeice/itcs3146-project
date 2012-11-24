@@ -1,0 +1,11 @@
+Memory Management Log
+---------------------------
+Job Amount: 200
+Memory Size: 100
+---------------------------
+Final Times (All times in milliseconds)
+Threaded time: 0
+Best fit time: 0
+Worst fit time: 0
+First fit time: 28094
+Next fit time: 26375

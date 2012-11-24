@@ -109,7 +109,6 @@ class NextFit implements baseAlgorithm
 					positionToCompress=currentPosition;
 					tableEntries++;
 					jobLoaded=1;
-					System.out.println("add job "+jobId+toString());
 					s1=memSize*2;
 					}
 				}
@@ -137,7 +136,6 @@ class NextFit implements baseAlgorithm
 					currentPosition++;
 					jobLoaded=1;
 					positionToCompress=currentPosition;
-					System.out.println("add job "+jobId+toString());
 					s1=memSize*2;
 					}
 				}
@@ -156,7 +154,6 @@ class NextFit implements baseAlgorithm
 				currentPosition++;
 				jobLoaded=1;
 				positionToCompress=currentPosition;
-				System.out.println("add job "+jobId+toString());
 				s1=memSize*2;
 				}
 			}
@@ -189,7 +186,6 @@ class NextFit implements baseAlgorithm
 		
 		} catch (Exception e)
 			{
-				System.out.println("Could not allocate job with ID " + jobId);
 			}
 		//}
 	}
@@ -202,24 +198,18 @@ class NextFit implements baseAlgorithm
 	//this method removes a job it does not check to see if the job exisits
 	public void deallocate(int jSize, int beginningLocation)
 	{
-		System.out.println("jSize= "+jSize+"  startLoc= "+beginningLocation);
 		synchronized(memTable){
 		int deallocates1=0;
 		jobSize = jSize;
 		startLoc = beginningLocation;
-		System.out.println("jSize= "+jobSize+"  startLoc= "+startLoc);
 		//s1=0;
 		do
 		{
 			if(memTable[deallocates1][2] == startLoc)
 			{
-				System.out.println(memTable[deallocates1][0]+"  "+memTable[deallocates1][1]+"  "+memTable[deallocates1][5]);
-				System.out.println(startLoc+"   removed job "+memTable[deallocates1][0]);
 				memTable[deallocates1][0] = 0;
 				memTable[deallocates1][1] = 0;
 				memTable[deallocates1][5] = 0;
-				System.out.println(memTable[deallocates1][0]+"  "+memTable[deallocates1][1]+"  "+memTable[deallocates1][5]);
-				System.out.println(toString());
 				noJobs--;
 				deallocates1=memSize*2;
 			}
@@ -234,7 +224,6 @@ class NextFit implements baseAlgorithm
 	//this method compacts the memory
 	public void compMem()
 	{
-		//System.out.println("Compacting Memory");
 		compMemTest=tableEntries;
 		for(int c=0; c<=compMemTest; c++)
 		{

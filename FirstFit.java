@@ -102,7 +102,6 @@ class FirstFit implements baseAlgorithm
 					memTable[s1+1][5] = -1;
 					tableEntries++;
 					jobLoaded=1;
-					System.out.println("add job "+jobId+toString());
 					s1=memSize*2;
 					}
 				}
@@ -128,7 +127,6 @@ class FirstFit implements baseAlgorithm
 					memTable[s1+1][5] = -1;
 					tableEntries++;
 					jobLoaded=1;
-					System.out.println("add job "+jobId+toString());
 					s1=memSize*2;
 					}
 				}
@@ -145,7 +143,6 @@ class FirstFit implements baseAlgorithm
 				jobArray[jobId - 1] = newJob;
 				newJob.start();
 				jobLoaded=1;
-				System.out.println("add job "+jobId+toString());
 				s1=memSize*2;
 				}
 			}
@@ -170,7 +167,6 @@ class FirstFit implements baseAlgorithm
 		
 		} catch (Exception e)
 			{
-				System.out.println("Could not allocate job with ID " + jobId);
 			}
 		//}
 	}
@@ -187,19 +183,14 @@ class FirstFit implements baseAlgorithm
 		int deallocates1=0;
 		jobSize = jSize;
 		startLoc = beginningLocation;
-		System.out.println("jSize= "+jobSize+"  startLoc= "+startLoc);
 		//s1=0;
 		do
 		{
 			if(memTable[deallocates1][2] == startLoc)
 			{
-				System.out.println(memTable[deallocates1][0]+"  "+memTable[deallocates1][1]+"  "+memTable[deallocates1][5]);
-				System.out.println(startLoc+"   removed job "+memTable[deallocates1][0]);
 				memTable[deallocates1][0] = 0;
 				memTable[deallocates1][1] = 0;
 				memTable[deallocates1][5] = 0;
-				System.out.println(memTable[deallocates1][0]+"  "+memTable[deallocates1][1]+"  "+memTable[deallocates1][5]);
-				System.out.println(toString());
 				noJobs--;
 				deallocates1=memSize*2;
 			}
@@ -214,7 +205,6 @@ class FirstFit implements baseAlgorithm
 	//this method compacts the memory
 	public void compMem()
 	{
-		//System.out.println("Compacting Memory");
 		compMemTest=tableEntries;
 		for(int c=0; c<=compMemTest; c++)
 		{
