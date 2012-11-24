@@ -9,10 +9,10 @@ import java.util.*;
 
 public class BestFitAlgorithm implements baseAlgorithm{
     
-    int memoryBlock[];
+    private int memoryBlock[];
     private Job[] jobArray = new Job[memoryManagement.JOBAMOUNT+10];
-    List<Integer> indices;
-    List<Integer> blocks;
+    ArrayList<Integer> indices;
+    ArrayList<Integer> blocks;
     int memoryLocation;
     int bestSize; //The most suitable block size for the job
     int bestSizeIndex; //The most suitable block size starting index for the job
@@ -21,8 +21,8 @@ public class BestFitAlgorithm implements baseAlgorithm{
     {
         //Initialize memory block to whatever the size is
         memoryBlock = new int[memorySize];
-        blocks = new ArrayList<>(); //Dynamically resizable array list for allocation candidates (interleaved with index and memory size);
-        indices = new ArrayList<>(); //Dynamically resizable array list for allocation candidates (interleaved with index and memory size);
+        blocks = new ArrayList(); //Dynamically resizable array list for allocation candidates (interleaved with index and memory size);
+        indices = new ArrayList(); //Dynamically resizable array list for allocation candidates (interleaved with index and memory size);
     }
     
     public int getBestIndex(int jobSize)
@@ -31,30 +31,31 @@ public class BestFitAlgorithm implements baseAlgorithm{
         
         indices.clear();
         blocks.clear();
-        
-        while (memoryLocation < this.memoryBlock.length)
+        synchronized(memoryBlock)
         {
-            if (memoryBlock[memoryLocation] != 0){
-                    memoryLocation++;
-                    continue;
-            }
-
-            int beginningLoc = memoryLocation;
-            int free = 0;
-            
-            while (memoryLocation < this.memoryBlock.length && memoryBlock[memoryLocation] == 0)
+            while (memoryLocation < this.memoryBlock.length)
             {
-                memoryLocation++;
-                free++;
-            }
+                if (memoryBlock[memoryLocation] != 0){
+                        memoryLocation++;
+                        continue;
+                }
 
-            if (free >= jobSize){
-                //System.out.println("Found a block of size " + free + " at " + beginningLoc);
-                blocks.add(free);
-                indices.add(beginningLoc);
+                int beginningLoc = memoryLocation;
+                int free = 0;
+
+                while (memoryLocation < this.memoryBlock.length && memoryBlock[memoryLocation] == 0)
+                {
+                    memoryLocation++;
+                    free++;
+                }
+
+                if (free >= jobSize){
+                    //System.out.println("Found a block of size " + free + " at " + beginningLoc);
+                    blocks.add(free);
+                    indices.add(beginningLoc);
+                }
             }
         }
-        
         //System.out.println("Size of indices array: " + indices.size());
         //System.out.println("Size of sizes array: " + blocks.size());
         
@@ -148,7 +149,7 @@ public class BestFitAlgorithm implements baseAlgorithm{
      */
     public void compact()
     {
-        List<Integer> takenBlocks = new ArrayList<>();
+        ArrayList<Integer> takenBlocks = new ArrayList();
         
         memoryLocation = 0;
         
@@ -161,12 +162,19 @@ public class BestFitAlgorithm implements baseAlgorithm{
        
         for(int i = 0; i < takenBlocks.size(); i++)
         {
-            this.memoryBlock[i] = takenBlocks.get(i).intValue();
+            
+            synchronized(memoryBlock)
+            {
+                this.memoryBlock[i] = takenBlocks.get(i).intValue();
+            }
         }
         
         for(int i = takenBlocks.size(); i < this.memoryBlock.length; i++)
         {
-            this.memoryBlock[i] = 0;
+            synchronized(memoryBlock)
+            {
+                this.memoryBlock[i] = 0;
+            }
         }
         
         /*System.out.println("Successfully compacted!");
@@ -181,9 +189,12 @@ public class BestFitAlgorithm implements baseAlgorithm{
     @Override
     public void deallocate(int jobSize, int beginningLocation)
     {
-        for(int i = beginningLocation; i < jobSize + beginningLocation; i++)
+        synchronized(memoryBlock)
         {
-            memoryBlock[i] = 0;
+            for(int i = beginningLocation; i < jobSize + beginningLocation; i++)
+            {
+                memoryBlock[i] = 0;
+            }
         }
     }
     
