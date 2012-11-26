@@ -71,7 +71,7 @@ public class memoryManagement{
 			System.out.println("complete");
 			System.out.println(jobLength+" jobs found on file");
 		}
-		
+
 		//Send jobs to algorithm, time is calculated and printed out after completion
 		//Note that we use `jobLength - 1` to compensate for the id above
 		//Threaded Fit
@@ -119,9 +119,13 @@ public class memoryManagement{
 		System.out.println("complete");
 		System.out.println("Elapsed time for next fit allocation algorithm to complete " + jobLength + " jobs is " + timeEnd[4] + " milliseconds");
 		
-		System.out.println("Printing to log...");
+		System.out.print("Printing to log...");
 		out.println("Memory Management Log");
 		out.println("---------------------------");
+		if(read.equals(""))
+			out.println("Job Assignment: Random");
+		else
+			out.println("Job Assignment: " + read + ".txt");
 		out.println("Job Amount: " + jobLength);
 		out.println("Memory Size: " + MEMORYSIZE);
 		out.println("---------------------------");

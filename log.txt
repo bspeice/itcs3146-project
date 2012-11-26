@@ -1,11 +1,12 @@
 Memory Management Log
 ---------------------------
-Job Amount: 200
+Job Assignment: in.txt
+Job Amount: 40
 Memory Size: 100
 ---------------------------
 Final Times (All times in milliseconds)
-Threaded time: 0
-Best fit time: 0
-Worst fit time: 0
-First fit time: 28094
-Next fit time: 26375
+Threaded time: 5372
+Best fit time: 3
+Worst fit time: 3
+First fit time: 3705
+Next fit time: 3706
