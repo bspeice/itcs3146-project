@@ -56,18 +56,21 @@ public class BestFitAlgorithm implements baseAlgorithm{
                 }
             }
         }
-        //System.out.println("Size of indices array: " + indices.size());
-        //System.out.println("Size of sizes array: " + blocks.size());
+        System.out.println("Size of indices array: " + indices.size());
+        System.out.println("Size of sizes array: " + blocks.size());
         
         for(int i = 0; i < blocks.size(); i++)
         {
-            //System.out.println("Index: " + indices.get(i));
-            //System.out.println("Size: " + blocks.get(i));
+            System.out.println("Index: " + indices.get(i));
+            System.out.println("Size: " + blocks.get(i));
         }
-        
+        int bSize = -1;
         int bestIndex = -1;
-        int bSize = blocks.get(0).intValue();
-        
+        if(!blocks.isEmpty())
+        {
+            bestIndex = indices.get(0).intValue();
+            bSize = blocks.get(0).intValue();
+        }
 
         //GET BEST INDEX
         for(int i = 0; i < blocks.size(); i++)
@@ -78,16 +81,17 @@ public class BestFitAlgorithm implements baseAlgorithm{
                 //Best possible fit. You're done.
                 //System.out.println("Best Case");
                 bestIndex = indices.get(i).intValue();
+                return bestIndex;
             }
             else if((blocks.get(i).intValue() <= bSize && blocks.get(i).intValue() >= jobSize) || blocks.get(i).intValue() > -1)
             {
                 bestIndex = indices.get(i).intValue();
+                return bestIndex;
             }
         }
         
         //System.out.println("bestIndex: " + bestIndex);
         //System.out.println("bSize: " + bSize);
-        
         return bestIndex;
     }
 
@@ -108,7 +112,7 @@ public class BestFitAlgorithm implements baseAlgorithm{
             if(bestSizeIndex == -1)
             {
                 //Compact and try again
-                //System.out.println("Compacting memory...");
+                System.out.println("Compacting memory...");
                 this.compact();
                 bestSizeIndex = this.getBestIndex(jobSize);
             }
@@ -121,12 +125,12 @@ public class BestFitAlgorithm implements baseAlgorithm{
                 {
                     for(int i = bestSizeIndex; i < jobSize + bestSizeIndex; i++)
                     {
-                        //System.out.println("Writing jobID: " + jobID + " to position " + i + " in memory block!");
+                        System.out.println("Writing jobID: " + jobID + " to position " + i + " in memory block that has a pre-existing value of: " + this.memoryBlock[i]);
                         this.memoryBlock[i] = jobID;
                     }
                 }
 
-                //System.out.println("Successfully allocated! Starting job...");
+                System.out.println("Successfully allocated! Starting job...");
                 
                 Job newJob = new Job(jobSize, jobID, jobSize, bestSizeIndex, deallocateMethod, this);
         
@@ -134,12 +138,14 @@ public class BestFitAlgorithm implements baseAlgorithm{
 
                 newJob.start();
                 
-                //System.out.println("Job started!");
+                System.out.println("Job started!");
             }
         }   
         catch (Exception e)
         {
-            //System.out.println("Could not allocate job with ID " + jobID);
+            System.out.println("Oops");
+            e.printStackTrace();
+	    System.exit(-1);
         }
     }
     /*
@@ -191,9 +197,10 @@ public class BestFitAlgorithm implements baseAlgorithm{
     {
         synchronized(memoryBlock)
         {
-            for(int i = beginningLocation; i < jobSize + beginningLocation; i++)
+           for (int x = 0; x < jobSize; x++)
             {
-                memoryBlock[i] = 0;
+                    System.out.println("Deallocating job at: " + "Location: " + beginningLocation + " Position: " + x);
+                    memoryBlock[beginningLocation + x] = 0;
             }
         }
     }
