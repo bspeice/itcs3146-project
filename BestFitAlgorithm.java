@@ -66,6 +66,7 @@ public class BestFitAlgorithm implements baseAlgorithm{
         }
         int bSize = 1;
         int bestIndex = -1;
+        
         if(!blocks.isEmpty())
         {
             bSize = blocks.get(0).intValue();
@@ -121,8 +122,8 @@ public class BestFitAlgorithm implements baseAlgorithm{
            
             if(bestSizeIndex != -1)
             {
-                System.out.println("The size of the job is: " + jobSize);
-                System.out.println("The best size index is: " + bestSizeIndex);
+                //System.out.println("The size of the job is: " + jobSize);
+                //System.out.println("The best size index is: " + bestSizeIndex);
                 
                 synchronized(memoryBlock)
                 {
@@ -135,7 +136,7 @@ public class BestFitAlgorithm implements baseAlgorithm{
 
                 //System.out.println("Successfully allocated! Starting job...");
                 
-                System.out.println("Job time: " + jobTime);
+                //System.out.println("Job time: " + jobTime);
                 
                 Job newJob = new Job(jobTime, jobID, jobSize, bestSizeIndex, deallocateMethod, this);
         

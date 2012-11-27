@@ -42,6 +42,7 @@ public class memoryManagement{
 		do{							
 			System.out.println("Type filename to load jobs from a file or just press enter for random jobs");
 			read = keyboard.nextLine();
+			read = read.trim();
 			file = new File(read + ".txt");
 			if(!read.equals("") && !file.exists())
 				System.out.println("File not found, try again");
