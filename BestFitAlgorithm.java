@@ -64,10 +64,12 @@ public class BestFitAlgorithm implements baseAlgorithm{
             //System.out.println("Index: " + indices.get(i));
             //System.out.println("Size: " + blocks.get(i));
         }
-        
+        int bSize = 1;
         int bestIndex = -1;
-        int bSize = blocks.get(0).intValue();
-        
+        if(!blocks.isEmpty())
+        {
+            bSize = blocks.get(0).intValue();
+        }
 
         //GET BEST INDEX
         for(int i = 0; i < blocks.size(); i++)
@@ -100,22 +102,27 @@ public class BestFitAlgorithm implements baseAlgorithm{
             
             bestSizeIndex = this.getBestIndex(jobSize);
             
+            if(bestSizeIndex == -1)
+            {
+                while(bestSizeIndex == -1)
+                {
+                    //Compact and try again
+                    //System.out.println("Compacting memory...");
+                    this.compact();
+                    bestSizeIndex = this.getBestIndex(jobSize);
+                }
+            }
+            
             if(jobSize > memoryBlock.length)
             {
                 //System.out.println("Job is too large for current memory size");
             }
             
-            if(bestSizeIndex == -1)
+           
+            if(bestSizeIndex != -1)
             {
-                //Compact and try again
-                //System.out.println("Compacting memory...");
-                this.compact();
-                bestSizeIndex = this.getBestIndex(jobSize);
-            }
-            else
-            {
-                //System.out.println("The size of the job is: " + jobSize);
-                //System.out.println("The best size index is: " + bestSizeIndex);
+                System.out.println("The size of the job is: " + jobSize);
+                System.out.println("The best size index is: " + bestSizeIndex);
                 
                 synchronized(memoryBlock)
                 {
@@ -128,7 +135,9 @@ public class BestFitAlgorithm implements baseAlgorithm{
 
                 //System.out.println("Successfully allocated! Starting job...");
                 
-                Job newJob = new Job(jobSize, jobID, jobSize, bestSizeIndex, deallocateMethod, this);
+                System.out.println("Job time: " + jobTime);
+                
+                Job newJob = new Job(jobTime, jobID, jobSize, bestSizeIndex, deallocateMethod, this);
         
                 jobArray[jobID] = newJob;
 
@@ -139,7 +148,8 @@ public class BestFitAlgorithm implements baseAlgorithm{
         }   
         catch (Exception e)
         {
-            //System.out.println("Could not allocate job with ID " + jobID);
+            e.printStackTrace();
+	    System.exit(-1);
         }
     }
     /*

@@ -67,7 +67,12 @@ public class WorstFitAlgorithm implements baseAlgorithm{
         }
         
         int worstIndex = -1;
-        int wSize = blocks.get(0).intValue();
+        int wSize = -1;
+        
+        if(!blocks.isEmpty())
+        {
+            wSize = blocks.get(0).intValue();
+        }
         
 
         //GET WORST INDEX
@@ -110,10 +115,13 @@ public class WorstFitAlgorithm implements baseAlgorithm{
             
             if(worstSizeIndex == -1)
             {
-                //Compact and try again
-                //System.out.println("Compacting memory...");
-                this.compact();
-                worstSizeIndex = this.getWorstIndex(jobSize);
+                while(worstSizeIndex == -1)
+                {
+                    //Compact and try again
+                    //System.out.println("Compacting memory...");
+                    this.compact();
+                    worstSizeIndex = this.getWorstIndex(jobSize);
+                }
             }
             else
             {
