@@ -43,10 +43,8 @@ public class memoryManagement{
 			System.out.println("Type filename to load jobs from a file or just press enter for random jobs");
 			read = keyboard.nextLine();
 			file = new File(read + ".txt");
-			if(!read.equals("") && !file.exists()) 
-                        {
-                         System.out.println("File not found, try again");
-                        }
+			if(!read.equals("") && !file.exists())
+				System.out.println("File not found, try again");
 		}while(!read.equals("") && !file.exists());
 	
 		//Create random jobs or read from the file and create jobs
@@ -77,23 +75,19 @@ public class memoryManagement{
 		//Send jobs to algorithm, time is calculated and printed out after completion
 		//Note that we use `jobLength - 1` to compensate for the id above
 		//Threaded Fit
-               
 		System.out.print("Sending jobs to threaded allocation algorithm...");
 		timeStart[0] = System.currentTimeMillis();
-		for(int i = 0; i < jobLength - 1; i++) {
-                    threadedFit.allocate(id[i], size[i], time[i]);
-                }
+		for(int i = 0; i < jobLength - 1; i++)
+			threadedFit.allocate(id[i], size[i], time[i]);
 		timeEnd[0] = System.currentTimeMillis() - timeStart[0];
 		System.out.println("complete");
 		System.out.println("Elapsed time for threaded allocation algorithm to complete " + jobLength + " jobs is " + timeEnd[0] + " milliseconds");
 		
 		//Best Fit
-		System.out.print("Sending jobs to best fit allocation algorithm...\n");
+		System.out.print("Sending jobs to best fit allocation algorithm...");
 		timeStart[1] = System.currentTimeMillis();
-		for(int i = 0; i < jobLength - 1; i++)  {
-                    System.out.println("**********NEXT ITERATION***********");
-                    bestFit.allocate(id[i], size[i], time[i]);
-                }
+		for(int i = 0; i < jobLength - 1; i++)
+			bestFit.allocate(id[i], size[i], time[i]);
 		timeEnd[1] = System.currentTimeMillis() - timeStart[1];
 		System.out.println("complete");
 		System.out.println("Elapsed time for best fit allocation algorithm to complete " + jobLength + " jobs is " + timeEnd[1] + " milliseconds");
@@ -101,9 +95,8 @@ public class memoryManagement{
 		//Worst Fit
 		System.out.print("Sending jobs to worst fit allocation algorithm...");
 		timeStart[2] = System.currentTimeMillis();
-		for(int i = 0; i < jobLength - 1; i++) {
-                    worstFit.allocate(id[i], size[i], time[i]);
-                }
+		for(int i = 0; i < jobLength - 1; i++)
+			worstFit.allocate(id[i], size[i], time[i]);
 		timeEnd[2] = System.currentTimeMillis() - timeStart[2];
 		System.out.println("complete");
 		System.out.println("Elapsed time for worst fit allocation algorithm to complete " + jobLength + " jobs is " + timeEnd[2] + " milliseconds");
@@ -111,9 +104,8 @@ public class memoryManagement{
 		//First Fit
 		System.out.print("Sending jobs to first fit allocation algorithm...");
 		timeStart[3] = System.currentTimeMillis();
-		for(int i = 0; i < jobLength - 1; i++) {
-                    firstFit.allocate(id[i], size[i], time[i]);
-                }
+		for(int i = 0; i < jobLength - 1; i++)
+			firstFit.allocate(id[i], size[i], time[i]);
 		timeEnd[3] = System.currentTimeMillis() - timeStart[3];
 		System.out.println("complete");
 		System.out.println("Elapsed time for first fit allocation algorithm to complete " + jobLength + " jobs is " + timeEnd[3] + " milliseconds");
@@ -121,9 +113,8 @@ public class memoryManagement{
 		//Next Fit
 		System.out.print("Sending jobs to next fit allocation algorithm...");
 		timeStart[4] = System.currentTimeMillis();
-		for(int i = 0; i < jobLength - 1; i++) {
-                 nextFit.allocate(id[i], size[i], time[i]);
-                }
+		for(int i = 0; i < jobLength - 1; i++)
+			nextFit.allocate(id[i], size[i], time[i]);
 		timeEnd[4] = System.currentTimeMillis() - timeStart[4];
 		System.out.println("complete");
 		System.out.println("Elapsed time for next fit allocation algorithm to complete " + jobLength + " jobs is " + timeEnd[4] + " milliseconds");
@@ -131,12 +122,10 @@ public class memoryManagement{
 		System.out.print("Printing to log...");
 		out.println("Memory Management Log");
 		out.println("---------------------------");
-		if(read.equals("")) {
-                    out.println("Job Assignment: Random");
-                }
-		else {
-                  out.println("Job Assignment: " + read + ".txt");
-                 }
+		if(read.equals(""))
+			out.println("Job Assignment: Random");
+		else
+			out.println("Job Assignment: " + read + ".txt");
 		out.println("Job Amount: " + jobLength);
 		out.println("Memory Size: " + MEMORYSIZE);
 		out.println("---------------------------");

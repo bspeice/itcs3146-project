@@ -138,10 +138,9 @@ public class WorstFitAlgorithm implements baseAlgorithm{
                 //System.out.println("Job started!");
             }
         }   
-         catch (Exception e)
+        catch (Exception e)
         {
-            e.printStackTrace();
-	    System.exit(-1);
+            //System.out.println("Could not allocate job with ID " + jobID);
         }
     }
     /*
@@ -189,11 +188,11 @@ public class WorstFitAlgorithm implements baseAlgorithm{
     @Override
     public void deallocate(int jobSize, int beginningLocation)
     {
-         synchronized(memoryBlock)
+        synchronized(memoryBlock)
         {
-           for (int x = 0; x < jobSize; x++)
+            for(int i = beginningLocation; i < jobSize + beginningLocation; i++)
             {
-                    memoryBlock[beginningLocation + x] = 0;
+                memoryBlock[i] = 0;
             }
         }
     }
