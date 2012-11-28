@@ -51,7 +51,7 @@ public class memoryManagement{
 		//Create random jobs or read from the file and create jobs
 		if(read.equals("")){
 			System.out.print("Creating " + JOBAMOUNT + " random jobs...");
-			jobLength = JOBAMOUNT;
+			jobLength = 40;
 			for(int i = 0; i < jobLength; i++){
 				id[i] = i+1;
 				size[i] = rand.nextInt(MEMORYSIZE / 10)+1;
