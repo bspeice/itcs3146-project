@@ -125,14 +125,14 @@ public class WorstFitAlgorithm implements baseAlgorithm{
                 while(worstSizeIndex == -1)
                 {
                     //Compact and try again
-                    System.out.println("Compacting memory...");
+                    System.out.print("");
                     this.compact();
                     worstSizeIndex = this.getWorstIndex(jobSize);
                 }
             }
             if(worstSizeIndex != -1)
             {
-                 System.out.println("Phew");
+                 //System.out.println("Phew");
                 //System.out.println("The size of the job is: " + jobSize);
                 //System.out.println("The worst size index is: " + worstSizeIndex);
                 synchronized(memoryBlock)
@@ -146,9 +146,9 @@ public class WorstFitAlgorithm implements baseAlgorithm{
                 //System.out.println("Successfully allocated! Starting job...");
                 
                 Job newJob = new Job(jobTime, jobID, jobSize, worstSizeIndex, deallocateMethod, this);
-        System.out.println("Job started!");
+        //System.out.println("Job started!");
                 jobArray[jobID] = newJob;
-        System.out.println("The size of the job array is: " + jobArray.length);
+        //System.out.println("The size of the job array is: " + jobArray.length);
                 newJob.start();
                 
                 //System.out.println("Job started!");
